@@ -20,6 +20,23 @@ class MainFragment : Fragment() {
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        navigation()
+    }
+
+    private fun navigation() {
+        binding.testNav.setOnClickListener {
+            binding.fragmentMainSearch.visibility = View.GONE
+            binding.fragmentMainUser.root.visibility = View.VISIBLE
+        }
+        binding.fragmentMainUser.closeBtn.setOnClickListener {
+            binding.fragmentMainSearch.visibility = View.VISIBLE
+            binding.fragmentMainUser.root.visibility = View.GONE
+        }
+    } //TODO refactor
+
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
