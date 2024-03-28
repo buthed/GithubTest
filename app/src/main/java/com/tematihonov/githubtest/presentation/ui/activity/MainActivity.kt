@@ -1,12 +1,12 @@
-package com.tematihonov.githubtest
+package com.tematihonov.githubtest.presentation.ui.activity
 
 import android.os.Bundle
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
+import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.tematihonov.githubtest.R
 import com.tematihonov.githubtest.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {

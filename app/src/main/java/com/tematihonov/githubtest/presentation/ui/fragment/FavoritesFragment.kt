@@ -1,4 +1,4 @@
-package com.tematihonov.githubtest
+package com.tematihonov.githubtest.presentation.ui.fragment
 
 import android.os.Bundle
 import android.view.LayoutInflater

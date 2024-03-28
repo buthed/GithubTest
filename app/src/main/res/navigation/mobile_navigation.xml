@@ -7,13 +7,13 @@
 
     <fragment
         android:id="@+id/navigation_main"
-        android:name="com.tematihonov.githubtest.MainFragment"
+        android:name="com.tematihonov.githubtest.presentation.ui.fragment.MainFragment"
         android:label="@string/label_main"
         tools:layout="@layout/fragment_main" />
 
     <fragment
         android:id="@+id/navigation_favorite"
-        android:name="com.tematihonov.githubtest.FavoritesFragment"
+        android:name="com.tematihonov.githubtest.presentation.ui.fragment.FavoritesFragment"
         android:label="@string/label_favorites"
         tools:layout="@layout/fragment_favorites" />
 

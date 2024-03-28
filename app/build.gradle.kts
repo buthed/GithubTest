@@ -1,7 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
-    alias(libs.plugins.kotlin.kapt)
+    id("kotlin-kapt")
 }
 
 android {
@@ -56,7 +56,7 @@ dependencies {
 
     // Dagger
     implementation(libs.google.dagger)
-    kapt(libs.google.dagger.compiler)
+    kapt  (libs.google.dagger.compiler)
 
     // Room
     implementation(libs.androidx.room.ktx)
@@ -65,6 +65,12 @@ dependencies {
 
     // Coil
     implementation(libs.coil.kt)
+
+    // Lifecycle
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-process:2.6.1")
 
     // Navigation
     implementation(libs.androidx.navigation.fragment.ktx)
