@@ -10,6 +10,6 @@ class GetSearchUsersUsecase @Inject constructor(
     private val networkRepository: NetworkRepository
 ) {
     suspend operator fun invoke(query: String): Flow<ResponseSearch> = flow {
-        emit(networkRepository.getSearchUsers("buthed",1,1))
+        emit(networkRepository.getSearchUsers("buthed",5,1))
     }
 }
