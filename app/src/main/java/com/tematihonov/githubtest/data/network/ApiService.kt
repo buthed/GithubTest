@@ -17,8 +17,8 @@ interface ApiService {
         @Query("page") page: Int,
     ): ResponseSearch
 
-    @GET("${USERS}{userName}")
+    @GET("${USERS}{userLogin}")
     suspend fun getUser(
-        @Path("userName") userName: String
+        @Path("userLogin") userLogin: String
     ): ResponseUser
 }

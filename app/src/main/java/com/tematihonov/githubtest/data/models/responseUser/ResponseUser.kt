@@ -1,11 +1,11 @@
 package com.tematihonov.githubtest.data.models.responseUser
 
 data class ResponseUser(
-    val avatarUrl: String,
-    val bio: String,
-    val company: Any,
-    val createdAt: String,
-    val email: Any,
+    val avatar_url: String,
+    val bio: Any,
+    val company: String?,
+    val created_at: String,
+    val email: Any?,
     val followers: Int,
     val following: Int,
     val id: Int,

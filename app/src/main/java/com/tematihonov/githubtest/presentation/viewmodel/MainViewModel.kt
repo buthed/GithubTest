@@ -8,6 +8,7 @@ import com.tematihonov.githubtest.data.models.responseSearch.ResponseSearch
 import com.tematihonov.githubtest.data.models.responseUser.ResponseUser
 import com.tematihonov.githubtest.domain.usecase.NetworkUnionUseCase
 import com.tematihonov.githubtest.utils.Resource
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
@@ -20,19 +21,35 @@ class MainViewModel @Inject constructor(
     val responseSearch = MutableLiveData<Resource<ResponseSearch>>()
     val currentUser = MutableLiveData<Resource<ResponseUser>>()
 
-    init {
-        searchUsers()
+    fun searchUsers(searchInput: String) {
+        if (searchInput.isBlank()) {
+            responseSearch.postValue(Resource.Success(ResponseSearch(false, emptyList(), 0)))
+        } else {
+            viewModelScope.launch {
+                networkUnionUseCase.getSearchUsersUsecase.invoke(searchInput).onStart {
+                    responseSearch.postValue(Resource.Loading())
+                }.catch {
+                    responseSearch.postValue(it.message?.let { it1 -> Resource.Error(it1) })
+                }.collect {
+                    responseSearch.postValue(Resource.Success(it))
+                    Log.d("GGG","Current list")
+                }
+            }
+        }
     }
 
-    fun searchUsers() {
+    fun setCurrentUser(userLogin: String) {
         viewModelScope.launch {
-            networkUnionUseCase.getSearchUsersUsecase.invoke("but").onStart {
-                responseSearch.postValue(Resource.Loading())
+            networkUnionUseCase.getUserUseCase.invoke(userLogin).onStart {
+                currentUser.postValue(Resource.Loading())
             }.catch {
-                responseSearch.postValue(it.message?.let { it1 -> Resource.Error(it1) })
+                currentUser.postValue(it.message?.let { it1 -> Resource.Error(it1) })
             }.collect {
-                responseSearch.postValue(Resource.Success(it))
-                Log.d("GGG","Current list")
+                currentUser.postValue(Resource.Success(it))
+                Log.d("GGG", "vm url - ${it.avatar_url}, name - ${it.name}")
+                delay(100)
+                Log.d("GGG", "vm url - ${it.avatar_url}, name - ${it.name}")
+                Log.d("GGG", "${it}")
             }
         }
     }

@@ -7,5 +7,5 @@ interface NetworkRepository {
 
     suspend fun getSearchUsers(query: String, perPage: Int, page: Int, ): ResponseSearch
 
-    suspend fun getUser(userName: String): ResponseUser
+    suspend fun getUser(userLogin: String): ResponseUser
 }

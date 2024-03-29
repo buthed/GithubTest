@@ -41,6 +41,7 @@
     </LinearLayout>
     
     <ImageView
+        android:id="@+id/user_avatar"
         android:layout_width="120dp"
         android:layout_height="120dp"
         android:layout_marginVertical="20dp"
@@ -52,6 +53,7 @@
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/user_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Firstname Lastname"
@@ -59,6 +61,7 @@
             android:textSize="20sp"/>
 
         <TextView
+            android:id="@+id/user_email"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Email: 123123213" />
@@ -89,6 +92,7 @@
                     android:layout_height="25dp"
                     android:src="@drawable/icon_followers"/>
                 <TextView
+                    android:id="@+id/user_followers"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10dp"
@@ -110,6 +114,7 @@
                     android:layout_height="25dp"
                     android:src="@drawable/icon_followers"/>
                 <TextView
+                    android:id="@+id/user_following"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10dp"
@@ -121,6 +126,7 @@
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/user_company"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical"
@@ -130,6 +136,7 @@
                     android:layout_height="25dp"
                     android:src="@drawable/icon_company"/>
                 <TextView
+                    android:id="@+id/user_company_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginHorizontal="10dp"
@@ -140,9 +147,9 @@
     </androidx.cardview.widget.CardView>
 
     <TextView
+        android:id="@+id/user_github_created"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="10dp"
         android:text="@string/on_github_from" />
 
 </LinearLayout>
