@@ -12,9 +12,9 @@ interface ApiService {
 
     @GET(SEARCH)
     suspend fun getSearchUsers(
-        @Query("q") query: String,
         @Query("per_page") perPage: Int,
         @Query("page") page: Int,
+        @Query("q") query: String,
     ): ResponseSearch
 
     @GET("${USERS}{userLogin}")

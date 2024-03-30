@@ -4,6 +4,7 @@ import com.tematihonov.githubtest.data.repositoryImpl.NetworkRepositoryImpl
 import com.tematihonov.githubtest.data.repositoryImpl.RoomRepositoryImpl
 import com.tematihonov.githubtest.domain.repository.NetworkRepository
 import com.tematihonov.githubtest.domain.repository.RoomRepository
+import com.tematihonov.githubtest.domain.usecase.NetworkUnionUseCase
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton

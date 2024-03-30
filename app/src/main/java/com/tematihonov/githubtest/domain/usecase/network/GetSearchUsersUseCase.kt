@@ -6,10 +6,10 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
-class GetSearchUsersUsecase @Inject constructor(
+class GetSearchUsersUseCase @Inject constructor(
     private val networkRepository: NetworkRepository
 ) {
-    suspend operator fun invoke(query: String): Flow<ResponseSearch> = flow {
-        emit(networkRepository.getSearchUsers(query,5,1))
+    suspend operator fun invoke(perPage: Int, page: Int, query: String): Flow<ResponseSearch> = flow {
+        emit(networkRepository.getSearchUsers(perPage,page, query))
     }
 }

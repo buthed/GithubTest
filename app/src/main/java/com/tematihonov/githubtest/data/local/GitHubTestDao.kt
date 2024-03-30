@@ -4,7 +4,9 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import com.tematihonov.githubtest.domain.models.responseSearch.Item
 import com.tematihonov.githubtest.utils.RoomConstants.FAVORITE_USERS_TABLE
+import com.tematihonov.githubtest.utils.RoomConstants.SEARCH_USERS_TABLE
 import kotlinx.coroutines.flow.Flow
 
 @Dao

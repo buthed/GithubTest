@@ -8,5 +8,6 @@
     <string name="following">following</string>
     <string name="label_main">Main</string>
     <string name="label_favorites">Favorites</string>
+    <string name="favorite_title">Favorite users</string>
 
 </resources>

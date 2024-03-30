@@ -1,25 +1,35 @@
 package com.tematihonov.githubtest.presentation.ui.fragment
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.isInvisible
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.viewModelScope
+import androidx.paging.LoadState
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tematihonov.githubtest.App
 import com.tematihonov.githubtest.R
 import com.tematihonov.githubtest.data.local.FavoritesUserEntity
 import com.tematihonov.githubtest.databinding.FragmentMainBinding
-import com.tematihonov.githubtest.domain.models.responseSearch.Item
+import com.tematihonov.githubtest.presentation.ui.paginate.DefaultLoadStateAdapter
+import com.tematihonov.githubtest.presentation.ui.paginate.TryAgainAction
+import com.tematihonov.githubtest.presentation.ui.paginate.simpleScan
 import com.tematihonov.githubtest.presentation.ui.rcview.SearchUsersAdapter
 import com.tematihonov.githubtest.presentation.ui.utils.loadImageWithCoil
 import com.tematihonov.githubtest.presentation.ui.utils.usersAccountDateCreater
 import com.tematihonov.githubtest.presentation.viewmodel.MainViewModel
-import com.tematihonov.githubtest.utils.Resource
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class MainFragment : Fragment() {
@@ -31,6 +41,7 @@ class MainFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var adapter: SearchUsersAdapter
+    private lateinit var mainLoadStateHolder: DefaultLoadStateAdapter.Holder
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,35 +62,28 @@ class MainFragment : Fragment() {
         navigation()
         setupOnBackPressed()
 
-        viewModel.responseSearch.observe(viewLifecycleOwner) {
-            when (it) {
-                is Resource.Error -> {
-                    //TODO()
-                }
-                is Resource.Loading -> {
-                    //TODO()
-                }
-                is Resource.Success -> { if (it.data != null) { searchUserAdapter(it.data.items) } }
-            }
+//        viewModel.responseSearch.observe(viewLifecycleOwner) {
+//            when (it) {
+//                is Resource.Error -> {
+//                    //TODO()
+//                }
+//                is Resource.Loading -> {
+//                    //TODO()
+//                }
+//                is Resource.Success -> { if (it.data != null) { searchUserAdapter(it.data.items) } }
+//            }
+//
+//        } //TODO loading success
 
-        } //TODO loading success
-
-        searchInput()
+        setupSearchInput()
         currentUser()
-
-
+        setupUserAdapter()
     }
 
-    private fun searchInput() {
-        binding.edLogin.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {}
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                viewModel.searchUsers(s.toString())
-            } //TODO optimize?
-        })
+    private fun setupSearchInput() {
+        binding.edLogin.addTextChangedListener {
+            if (!it.isNullOrEmpty()) { viewModel.setSearchBy(it.toString()) }
+        }
     }
 
     private fun currentUser() {
@@ -127,14 +131,74 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun searchUserAdapter(userList: List<Item>) {
+    private fun setupUserAdapter() {
         adapter = SearchUsersAdapter( onClickListener = { openUserScreen(it) } )
-        adapter.userList = userList
+
+        val tryAgainAction: TryAgainAction = { adapter.retry() }
+        val footerAdapter = DefaultLoadStateAdapter(tryAgainAction)
+        val adapterWithLoadState = adapter.withLoadStateFooter(footerAdapter)
+
         val layoutManager = LinearLayoutManager(this.context)
         binding.apply {
             rvUsers.layoutManager = layoutManager
-            rvUsers.adapter = adapter
+            //rvUsers.adapter = adapter
+            rvUsers.adapter = adapterWithLoadState
+            (rvUsers.itemAnimator as? DefaultItemAnimator)?.supportsChangeAnimations = false
         }
+
+        mainLoadStateHolder = DefaultLoadStateAdapter.Holder(
+            binding.loadStateView,
+            binding.swipeRefreshLayout,
+            tryAgainAction
+        )
+
+        observeUsers(adapter)
+        observeLoadState(adapter)
+
+        handleScrollingToTopWhenSearching(adapter)
+        handleListVisibility(adapter)
+    }
+
+    private fun observeUsers(adapter: SearchUsersAdapter) {
+        lifecycleScope.launch {
+            viewModel.usersFlow.collectLatest { pagingData ->
+                if (!viewModel.searchBy.value.isNullOrBlank()) adapter.submitData(pagingData)
+            }
+        }
+    }
+
+    private fun observeLoadState(adapter: SearchUsersAdapter) {
+        lifecycleScope.launch {
+            adapter.loadStateFlow.debounce(200).collectLatest { state ->
+                mainLoadStateHolder.bind(state.refresh)
+            }
+        }
+    }
+
+    private fun handleScrollingToTopWhenSearching(adapter: SearchUsersAdapter) = lifecycleScope.launch {
+        getRefreshLoadStateFlow(adapter)
+            .simpleScan(count = 2)
+            .collectLatest { (previousState, currentState) ->
+                if (previousState is LoadState.Loading && currentState is LoadState.NotLoading) {
+                    binding.rvUsers.scrollToPosition(0)
+                }
+            }
+    }
+
+    private fun handleListVisibility(adapter: SearchUsersAdapter) = lifecycleScope.launch {
+        getRefreshLoadStateFlow(adapter)
+            .simpleScan(count = 3)
+            .collectLatest { (beforePrevious, previous, current) ->
+                binding.rvUsers.isInvisible = current is LoadState.Error
+                        || previous is LoadState.Error
+                        || (beforePrevious is LoadState.Error && previous is LoadState.NotLoading
+                        && current is LoadState.Loading)
+            }
+    }
+
+    private fun getRefreshLoadStateFlow(adapter: SearchUsersAdapter): Flow<LoadState> {
+        return adapter.loadStateFlow
+            .map { it.refresh }
     }
 
     private fun setupOnBackPressed() {
@@ -154,12 +218,14 @@ class MainFragment : Fragment() {
     private fun hideUserScreen() = with(binding) {
         fragmentMainSearch.visibility = View.VISIBLE
         fragmentMainUser.root.visibility = View.GONE
+        tiLogin.visibility = View.VISIBLE
     }
 
     private fun openUserScreen(userLogin: String) = with(binding) {
         testUserForFavorite(user = userLogin)
         viewModel.setCurrentUser(userLogin)
         fragmentMainSearch.visibility = View.GONE
+        tiLogin.visibility = View.GONE
         fragmentMainUser.root.visibility = View.VISIBLE
     }
 
@@ -167,7 +233,6 @@ class MainFragment : Fragment() {
         fragmentMainUser.closeBtn.setOnClickListener {
             hideUserScreen()
             viewModel.searchUsers(edLogin.text.toString())
-            Log.d("GGG", "fragmentMainUser.closeBtn ${edLogin.text.toString()}")
         }
     }
 

@@ -72,6 +72,12 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
     implementation("androidx.lifecycle:lifecycle-process:2.6.1")
 
+    // PullToRefresh
+    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+
+    // Paging3
+    implementation("androidx.paging:paging-runtime-ktx:3.1.0")
+
     // Navigation
     implementation(libs.androidx.navigation.fragment.ktx)
     implementation(libs.androidx.navigation.ui.ktx)

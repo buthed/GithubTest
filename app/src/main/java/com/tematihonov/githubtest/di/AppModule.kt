@@ -1,5 +1,6 @@
 package com.tematihonov.githubtest.di
 
+import com.tematihonov.githubtest.data.repositoryImpl.NetworkRepositoryImpl
 import com.tematihonov.githubtest.domain.usecase.LocalUnionUseCase
 import com.tematihonov.githubtest.domain.usecase.NetworkUnionUseCase
 import com.tematihonov.githubtest.presentation.viewmodel.FavoriteViewModel
@@ -11,8 +12,8 @@ import dagger.Provides
 class AppModule() {
 
     @Provides
-    fun provideMainViewModel(networkUnionUseCase: NetworkUnionUseCase, localUnionUseCase: LocalUnionUseCase): MainViewModel {
-        return MainViewModel(networkUnionUseCase, localUnionUseCase)
+    fun provideMainViewModel(networkUnionUseCase: NetworkUnionUseCase, localUnionUseCase: LocalUnionUseCase, repository: NetworkRepositoryImpl): MainViewModel {
+        return MainViewModel(networkUnionUseCase, localUnionUseCase, repository)
     }
 
     @Provides
