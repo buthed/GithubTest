@@ -1,7 +1,7 @@
 package com.tematihonov.githubtest.domain.repository
 
-import com.tematihonov.githubtest.data.models.responseSearch.ResponseSearch
-import com.tematihonov.githubtest.data.models.responseUser.ResponseUser
+import com.tematihonov.githubtest.domain.models.responseSearch.ResponseSearch
+import com.tematihonov.githubtest.domain.models.responseUser.ResponseUser
 
 interface NetworkRepository {
 

@@ -1,7 +1,7 @@
 package com.tematihonov.githubtest.data.network
 
-import com.tematihonov.githubtest.data.models.responseSearch.ResponseSearch
-import com.tematihonov.githubtest.data.models.responseUser.ResponseUser
+import com.tematihonov.githubtest.domain.models.responseSearch.ResponseSearch
+import com.tematihonov.githubtest.domain.models.responseUser.ResponseUser
 import com.tematihonov.githubtest.utils.RetrofitConstants.SEARCH
 import com.tematihonov.githubtest.utils.RetrofitConstants.USERS
 import retrofit2.http.GET

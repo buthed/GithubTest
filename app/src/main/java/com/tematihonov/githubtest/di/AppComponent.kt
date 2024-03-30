@@ -1,5 +1,6 @@
 package com.tematihonov.githubtest.di
 
+import com.tematihonov.githubtest.presentation.ui.fragment.FavoritesFragment
 import com.tematihonov.githubtest.presentation.ui.fragment.MainFragment
 import dagger.Component
 import javax.inject.Singleton
@@ -9,9 +10,11 @@ import javax.inject.Singleton
     AppModule::class,
     RepositoryModule::class,
     NetworkModule::class,
-    UseCaseModule::class
+    UseCaseModule::class,
+    DataBaseModule::class
 ])
 interface AppComponent {
 
     fun inject(fragment: MainFragment)
+    fun inject(fragment: FavoritesFragment)
 }

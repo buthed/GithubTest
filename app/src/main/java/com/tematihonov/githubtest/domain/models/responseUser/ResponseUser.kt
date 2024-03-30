@@ -1,4 +1,4 @@
-package com.tematihonov.githubtest.data.models.responseUser
+package com.tematihonov.githubtest.domain.models.responseUser
 
 data class ResponseUser(
     val avatar_url: String,

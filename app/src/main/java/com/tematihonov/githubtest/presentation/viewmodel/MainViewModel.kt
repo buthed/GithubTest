@@ -4,8 +4,10 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.tematihonov.githubtest.data.models.responseSearch.ResponseSearch
-import com.tematihonov.githubtest.data.models.responseUser.ResponseUser
+import com.tematihonov.githubtest.data.local.FavoritesUserEntity
+import com.tematihonov.githubtest.domain.models.responseSearch.ResponseSearch
+import com.tematihonov.githubtest.domain.models.responseUser.ResponseUser
+import com.tematihonov.githubtest.domain.usecase.LocalUnionUseCase
 import com.tematihonov.githubtest.domain.usecase.NetworkUnionUseCase
 import com.tematihonov.githubtest.utils.Resource
 import kotlinx.coroutines.delay
@@ -16,10 +18,29 @@ import javax.inject.Inject
 
 class MainViewModel @Inject constructor(
     private val networkUnionUseCase: NetworkUnionUseCase,
+    private val localUnionUseCase: LocalUnionUseCase,
 ) : ViewModel() {
 
     val responseSearch = MutableLiveData<Resource<ResponseSearch>>()
     val currentUser = MutableLiveData<Resource<ResponseUser>>()
+
+    fun addOrDeleteFromFavorite(user: FavoritesUserEntity, callback: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            val result = localUnionUseCase.checkUsersOnContainsInTable.invoke(user.login)
+            when(result) {
+                true -> localUnionUseCase.deleteUserFromFavorite.invoke(user.login)
+                false -> localUnionUseCase.addUserToFavorites.invoke(user)
+            }
+            callback(result)
+        }
+    } //TODO recheck
+
+    fun testDbFavorites(userLogin: String, callback: (Boolean) -> Unit) {
+        viewModelScope.launch {
+            val result = localUnionUseCase.checkUsersOnContainsInTable.invoke(userLogin)
+            callback(result)
+        }
+    }
 
     fun searchUsers(searchInput: String) {
         if (searchInput.isBlank()) {

@@ -1,37 +1,37 @@
 package com.tematihonov.githubtest.presentation.ui.rcview
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.tematihonov.githubtest.R
+import com.tematihonov.githubtest.data.local.FavoritesUserEntity
 import com.tematihonov.githubtest.databinding.ItemUserBinding
-import com.tematihonov.githubtest.domain.models.responseSearch.Item
 import com.tematihonov.githubtest.presentation.ui.utils.loadImageWithCoil
 
-class SearchUsersAdapter(
-    val onClickListener: (String) -> Unit,
-) : RecyclerView.Adapter<SearchUsersAdapter.SearchUsersViewHolder>() {
+class FavoriteUsersAdapter(
+    private val deleteUserFromFavorites: (String) -> Unit
+) : RecyclerView.Adapter<FavoriteUsersAdapter.FavoriteUsersViewHolder>() {
 
-    var userList: List<Item> = emptyList()
+    var userList: List<FavoritesUserEntity> = emptyList()
         set(newValue) {
             field = newValue
             notifyDataSetChanged()
         }
 
-    inner class SearchUsersViewHolder(val binding: ItemUserBinding) :
+    inner class FavoriteUsersViewHolder(val binding: ItemUserBinding) :
         RecyclerView.ViewHolder(binding.root)
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int,
-    ): SearchUsersViewHolder {
+    ): FavoriteUsersViewHolder {
         val inflater = LayoutInflater.from(parent.context)
         val binding = ItemUserBinding.inflate(inflater, parent, false)
-        return SearchUsersViewHolder(binding)
+        return FavoriteUsersViewHolder(binding)
     }
 
     override fun onBindViewHolder(
-        holder: SearchUsersAdapter.SearchUsersViewHolder,
+        holder: FavoriteUsersAdapter.FavoriteUsersViewHolder,
         position: Int,
     ) {
         val user = userList[position]
@@ -39,9 +39,9 @@ class SearchUsersAdapter(
             itemLogin.text = user.login
             itemSubtitle.text = user.id.toString()
             itemAvatar.loadImageWithCoil(user.avatar_url)
-            itemFavorite.visibility = View.GONE
+            itemFavorite.setBackgroundResource(R.drawable.icon_favorite_filled) //TODO fix
+            itemFavorite.setOnClickListener { deleteUserFromFavorites(user.login) }
         }
-        holder.itemView.setOnClickListener { onClickListener(user.login) }
     }
 
     override fun getItemCount(): Int {

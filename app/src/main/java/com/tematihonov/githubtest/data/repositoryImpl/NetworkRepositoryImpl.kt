@@ -1,8 +1,8 @@
 package com.tematihonov.githubtest.data.repositoryImpl
 
-import com.tematihonov.githubtest.data.models.responseSearch.ResponseSearch
-import com.tematihonov.githubtest.data.models.responseUser.ResponseUser
 import com.tematihonov.githubtest.data.network.ApiService
+import com.tematihonov.githubtest.domain.models.responseSearch.ResponseSearch
+import com.tematihonov.githubtest.domain.models.responseUser.ResponseUser
 import com.tematihonov.githubtest.domain.repository.NetworkRepository
 import javax.inject.Inject
 

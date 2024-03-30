@@ -1,4 +1,4 @@
-package com.tematihonov.githubtest.data.models.responseSearch
+package com.tematihonov.githubtest.domain.models.responseSearch
 
 data class Item(
     val avatar_url: String,

@@ -3,6 +3,7 @@ package com.tematihonov.githubtest.presentation.ui.fragment
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,13 +11,15 @@ import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tematihonov.githubtest.App
-import com.tematihonov.githubtest.data.models.responseSearch.Item
-import com.tematihonov.githubtest.data.models.responseSearch.ResponseSearch
+import com.tematihonov.githubtest.R
+import com.tematihonov.githubtest.data.local.FavoritesUserEntity
 import com.tematihonov.githubtest.databinding.FragmentMainBinding
+import com.tematihonov.githubtest.domain.models.responseSearch.Item
 import com.tematihonov.githubtest.presentation.ui.rcview.SearchUsersAdapter
 import com.tematihonov.githubtest.presentation.ui.utils.loadImageWithCoil
 import com.tematihonov.githubtest.presentation.ui.utils.usersAccountDateCreater
 import com.tematihonov.githubtest.presentation.viewmodel.MainViewModel
+import com.tematihonov.githubtest.utils.Resource
 import javax.inject.Inject
 
 class MainFragment : Fragment() {
@@ -48,14 +51,23 @@ class MainFragment : Fragment() {
         navigation()
         setupOnBackPressed()
 
+        viewModel.responseSearch.observe(viewLifecycleOwner) {
+            when (it) {
+                is Resource.Error -> {
+                    //TODO()
+                }
+                is Resource.Loading -> {
+                    //TODO()
+                }
+                is Resource.Success -> { if (it.data != null) { searchUserAdapter(it.data.items) } }
+            }
+
+        } //TODO loading success
+
         searchInput()
         currentUser()
 
-        viewModel.responseSearch.observe(viewLifecycleOwner) {
-            if (it.data != null) {
-                responseSearchObserverAction(it.data)
-            }
-        } //TODO loading success
+
     }
 
     private fun searchInput() {
@@ -92,19 +104,31 @@ class MainFragment : Fragment() {
                     userFollowers.text = user.followers.toString()
                     userGithubCreated.text =
                         usersAccountDateCreater(requireContext(), user.created_at)
+                    testUserForFavorite(user.login)
+                    userFavorite.setOnClickListener {
+                        viewModel.addOrDeleteFromFavorite(FavoritesUserEntity(user.avatar_url,user.id, user.login)) { result ->
+                            when (result) {
+                                true -> userFavorite.setBackgroundResource(R.drawable.icon_favorite_border)
+                                false -> userFavorite.setBackgroundResource(R.drawable.icon_favorite_filled)
+                            }
+                        }
+                    }
                 }
             }
         }
     }
 
-    private fun responseSearchObserverAction(responseSearch: ResponseSearch) {
-        if (responseSearch.items != null) {
-            searchUserAdapter(responseSearch.items)
+    private fun testUserForFavorite(user: String) = with(binding.fragmentMainUser) {
+        viewModel.testDbFavorites(user) { result ->
+            when (result) {
+                true -> userFavorite.setBackgroundResource(R.drawable.icon_favorite_filled)
+                false -> userFavorite.setBackgroundResource(R.drawable.icon_favorite_border)
+            }
         }
     }
 
     private fun searchUserAdapter(userList: List<Item>) {
-        adapter = SearchUsersAdapter { openUserScreen(it) }
+        adapter = SearchUsersAdapter( onClickListener = { openUserScreen(it) } )
         adapter.userList = userList
         val layoutManager = LinearLayoutManager(this.context)
         binding.apply {
@@ -133,13 +157,18 @@ class MainFragment : Fragment() {
     }
 
     private fun openUserScreen(userLogin: String) = with(binding) {
+        testUserForFavorite(user = userLogin)
         viewModel.setCurrentUser(userLogin)
         fragmentMainSearch.visibility = View.GONE
         fragmentMainUser.root.visibility = View.VISIBLE
     }
 
     private fun navigation() = with(binding) {
-        fragmentMainUser.closeBtn.setOnClickListener { hideUserScreen() }
+        fragmentMainUser.closeBtn.setOnClickListener {
+            hideUserScreen()
+            viewModel.searchUsers(edLogin.text.toString())
+            Log.d("GGG", "fragmentMainUser.closeBtn ${edLogin.text.toString()}")
+        }
     }
 
     override fun onDestroyView() {

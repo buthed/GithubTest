@@ -3,6 +3,7 @@ package com.tematihonov.githubtest
 import android.app.Application
 import com.tematihonov.githubtest.di.AppComponent
 import com.tematihonov.githubtest.di.DaggerAppComponent
+import com.tematihonov.githubtest.di.DataBaseModule
 
 class App: Application() {
 
@@ -10,6 +11,8 @@ class App: Application() {
 
     override fun onCreate() {
         super.onCreate()
-        appComponent = DaggerAppComponent.create()
+        appComponent = DaggerAppComponent.builder()
+            .dataBaseModule(DataBaseModule(applicationContext))
+            .build()
     }
 }
