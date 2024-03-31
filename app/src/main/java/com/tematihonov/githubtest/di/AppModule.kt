@@ -12,12 +12,19 @@ import dagger.Provides
 class AppModule() {
 
     @Provides
-    fun provideMainViewModel(networkUnionUseCase: NetworkUnionUseCase, localUnionUseCase: LocalUnionUseCase, repository: NetworkRepositoryImpl): MainViewModel {
+    fun provideMainViewModel(
+        networkUnionUseCase: NetworkUnionUseCase,
+        localUnionUseCase: LocalUnionUseCase,
+        repository: NetworkRepositoryImpl,
+    ): MainViewModel {
         return MainViewModel(networkUnionUseCase, localUnionUseCase, repository)
     }
 
     @Provides
-    fun provideFavoriteViewModel(networkUnionUseCase: NetworkUnionUseCase, localUnionUseCase: LocalUnionUseCase): FavoriteViewModel {
+    fun provideFavoriteViewModel(
+        networkUnionUseCase: NetworkUnionUseCase,
+        localUnionUseCase: LocalUnionUseCase,
+    ): FavoriteViewModel {
         return FavoriteViewModel(networkUnionUseCase, localUnionUseCase)
     }
 }

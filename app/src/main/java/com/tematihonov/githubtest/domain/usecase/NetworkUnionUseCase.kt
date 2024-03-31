@@ -5,5 +5,5 @@ import com.tematihonov.githubtest.domain.usecase.network.GetUserUseCase
 
 data class NetworkUnionUseCase(
     val getSearchUsersUsecase: GetSearchUsersUseCase,
-    val getUserUseCase: GetUserUseCase
+    val getUserUseCase: GetUserUseCase,
 )

@@ -49,6 +49,8 @@ dependencies {
     // Lifecycle
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
+    implementation(libs.androidx.lifecycle.runtime.ktx)
+    implementation(libs.androidx.lifecycle.process.ktx)
 
     // Retrofit
     implementation(libs.retrofit2.retrofit)
@@ -66,17 +68,11 @@ dependencies {
     // Coil
     implementation(libs.coil.kt)
 
-    // Lifecycle
-    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
-    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.6.1")
-    implementation("androidx.lifecycle:lifecycle-process:2.6.1")
-
     // PullToRefresh
-    implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    implementation(libs.androidx.swiperefreshlayout)
 
     // Paging3
-    implementation("androidx.paging:paging-runtime-ktx:3.1.0")
+    implementation(libs.androidx.paging.runtime)
 
     // Navigation
     implementation(libs.androidx.navigation.fragment.ktx)

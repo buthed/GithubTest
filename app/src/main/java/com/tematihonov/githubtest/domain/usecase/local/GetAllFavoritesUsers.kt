@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class GetAllFavoritesUsers @Inject constructor(
-    private val roomRepository: RoomRepository
+    private val roomRepository: RoomRepository,
 ) {
 
     fun invoke(): Flow<List<FavoritesUserEntity>> {

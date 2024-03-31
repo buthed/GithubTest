@@ -1,6 +1,5 @@
 package com.tematihonov.githubtest.presentation.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asFlow
@@ -13,6 +12,7 @@ import com.tematihonov.githubtest.domain.models.responseUser.ResponseUser
 import com.tematihonov.githubtest.domain.usecase.LocalUnionUseCase
 import com.tematihonov.githubtest.domain.usecase.NetworkUnionUseCase
 import com.tematihonov.githubtest.utils.Resource
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.flatMapLatest
@@ -35,7 +35,7 @@ class MainViewModel @Inject constructor(
         }.cachedIn(viewModelScope)
 
 
-    val responseSearch = MutableLiveData<Resource<ResponseSearch>>()
+    private val responseSearch = MutableLiveData<Resource<ResponseSearch>>()
     val currentUser = MutableLiveData<Resource<ResponseUser>>()
 
 
@@ -53,6 +53,7 @@ class MainViewModel @Inject constructor(
     fun testDbFavorites(userLogin: String, callback: (Boolean) -> Unit) {
         viewModelScope.launch {
             val result = localUnionUseCase.checkUsersOnContainsInTable.invoke(userLogin)
+            delay(100)
             callback(result)
         }
     }
@@ -78,7 +79,6 @@ class MainViewModel @Inject constructor(
                     responseSearch.postValue(it.message?.let { it1 -> Resource.Error(it1) })
                 }.collect {
                     responseSearch.postValue(Resource.Success(it))
-                    Log.d("GGG", "search search")
                 }
             }
         }

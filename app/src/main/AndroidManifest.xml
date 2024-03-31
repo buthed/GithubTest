@@ -13,6 +13,7 @@
         android:theme="@style/Theme.GithubTest">
         <activity
             android:name=".presentation.ui.activity.MainActivity"
+            android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

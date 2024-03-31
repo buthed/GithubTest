@@ -9,7 +9,8 @@ import com.tematihonov.githubtest.databinding.ItemUserBinding
 import com.tematihonov.githubtest.presentation.ui.utils.loadImageWithCoil
 
 class FavoriteUsersAdapter(
-    private val deleteUserFromFavorites: (String) -> Unit
+    private val deleteUserFromFavorites: (String) -> Unit,
+    val onClickListener: (String) -> Unit,
 ) : RecyclerView.Adapter<FavoriteUsersAdapter.FavoriteUsersViewHolder>() {
 
     var userList: List<FavoritesUserEntity> = emptyList()
@@ -39,9 +40,10 @@ class FavoriteUsersAdapter(
             itemLogin.text = user.login
             itemSubtitle.text = user.id.toString()
             itemAvatar.loadImageWithCoil(user.avatar_url)
-            itemFavorite.setBackgroundResource(R.drawable.icon_favorite_filled) //TODO fix
+            itemFavorite.setBackgroundResource(R.drawable.icon_favorite_filled)
             itemFavorite.setOnClickListener { deleteUserFromFavorites(user.login) }
         }
+        holder.itemView.setOnClickListener { onClickListener(user.login) }
     }
 
     override fun getItemCount(): Int {

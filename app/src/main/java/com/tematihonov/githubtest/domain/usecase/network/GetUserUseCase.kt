@@ -7,7 +7,7 @@ import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class GetUserUseCase @Inject constructor(
-    private val networkRepository: NetworkRepository
+    private val networkRepository: NetworkRepository,
 ) {
     suspend operator fun invoke(userLogin: String): Flow<ResponseUser> = flow {
         emit(networkRepository.getUser(userLogin = userLogin))

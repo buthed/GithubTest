@@ -4,7 +4,6 @@ import com.tematihonov.githubtest.domain.repository.NetworkRepository
 import com.tematihonov.githubtest.domain.repository.RoomRepository
 import com.tematihonov.githubtest.domain.usecase.LocalUnionUseCase
 import com.tematihonov.githubtest.domain.usecase.NetworkUnionUseCase
-import com.tematihonov.githubtest.domain.usecase.local.AddSearchUserUseCase
 import com.tematihonov.githubtest.domain.usecase.local.AddUserToFavorites
 import com.tematihonov.githubtest.domain.usecase.local.CheckUsersOnContainsInTable
 import com.tematihonov.githubtest.domain.usecase.local.DeleteUserFromFavorite
@@ -31,7 +30,6 @@ class UseCaseModule {
     @Provides
     fun provideLocalUseCases(roomRepository: RoomRepository): LocalUnionUseCase {
         return LocalUnionUseCase(
-            addSearchUser = AddSearchUserUseCase(roomRepository),
             checkUsersOnContainsInTable = CheckUsersOnContainsInTable(roomRepository),
             addUserToFavorites = AddUserToFavorites(roomRepository),
             deleteUserFromFavorite = DeleteUserFromFavorite(roomRepository),

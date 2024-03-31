@@ -5,7 +5,7 @@ import com.tematihonov.githubtest.di.AppComponent
 import com.tematihonov.githubtest.di.DaggerAppComponent
 import com.tematihonov.githubtest.di.DataBaseModule
 
-class App: Application() {
+class App : Application() {
 
     lateinit var appComponent: AppComponent
 

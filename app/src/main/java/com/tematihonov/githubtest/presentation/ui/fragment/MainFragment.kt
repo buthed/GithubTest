@@ -1,17 +1,20 @@
 package com.tematihonov.githubtest.presentation.ui.fragment
 
+import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.content.res.AppCompatResources
+import androidx.core.view.ViewCompat
 import androidx.core.view.isInvisible
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.viewModelScope
 import androidx.paging.LoadState
+import androidx.paging.PagingData
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.tematihonov.githubtest.App
@@ -59,30 +62,22 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        setupUserAdapter()
         navigation()
         setupOnBackPressed()
-
-//        viewModel.responseSearch.observe(viewLifecycleOwner) {
-//            when (it) {
-//                is Resource.Error -> {
-//                    //TODO()
-//                }
-//                is Resource.Loading -> {
-//                    //TODO()
-//                }
-//                is Resource.Success -> { if (it.data != null) { searchUserAdapter(it.data.items) } }
-//            }
-//
-//        } //TODO loading success
-
         setupSearchInput()
         currentUser()
-        setupUserAdapter()
     }
 
-    private fun setupSearchInput() {
-        binding.edLogin.addTextChangedListener {
-            if (!it.isNullOrEmpty()) { viewModel.setSearchBy(it.toString()) }
+    private fun setupSearchInput() = with(binding) {
+        edLogin.addTextChangedListener {
+            viewModel.setSearchBy(it.toString())
+        }
+
+        edLogin.setOnFocusChangeListener { view, b ->
+            val imm =
+                requireActivity().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(edLogin.windowToken, 0)
         }
     }
 
@@ -98,6 +93,7 @@ class MainFragment : Fragment() {
                         userEmail.text = user.email.toString()
                         userEmail.visibility = View.VISIBLE
                     }
+                    userLogin.text = user.login
                     if (user.company == null) {
                         userCompany.visibility = View.GONE
                     } else {
@@ -108,9 +104,14 @@ class MainFragment : Fragment() {
                     userFollowers.text = user.followers.toString()
                     userGithubCreated.text =
                         usersAccountDateCreater(requireContext(), user.created_at)
-                    testUserForFavorite(user.login)
                     userFavorite.setOnClickListener {
-                        viewModel.addOrDeleteFromFavorite(FavoritesUserEntity(user.avatar_url,user.id, user.login)) { result ->
+                        viewModel.addOrDeleteFromFavorite(
+                            FavoritesUserEntity(
+                                user.avatar_url,
+                                user.id,
+                                user.login
+                            )
+                        ) { result ->
                             when (result) {
                                 true -> userFavorite.setBackgroundResource(R.drawable.icon_favorite_border)
                                 false -> userFavorite.setBackgroundResource(R.drawable.icon_favorite_filled)
@@ -125,14 +126,40 @@ class MainFragment : Fragment() {
     private fun testUserForFavorite(user: String) = with(binding.fragmentMainUser) {
         viewModel.testDbFavorites(user) { result ->
             when (result) {
-                true -> userFavorite.setBackgroundResource(R.drawable.icon_favorite_filled)
-                false -> userFavorite.setBackgroundResource(R.drawable.icon_favorite_border)
+                true -> ViewCompat.setBackground(
+                    userFavorite,
+                    AppCompatResources.getDrawable(
+                        requireContext(),
+                        R.drawable.icon_favorite_filled
+                    )
+                )
+
+                false -> ViewCompat.setBackground(
+                    userFavorite,
+                    AppCompatResources.getDrawable(
+                        requireContext(),
+                        R.drawable.icon_favorite_border
+                    )
+                )
             }
+            userFavorite.background
         }
     }
 
     private fun setupUserAdapter() {
-        adapter = SearchUsersAdapter( onClickListener = { openUserScreen(it) } )
+        adapter = SearchUsersAdapter(
+            onClickListener = { openUserScreen(it) },
+            addUserToFavorite = { a, b, c ->
+                viewModel.addOrDeleteFromFavorite(
+                    FavoritesUserEntity(
+                        a,
+                        b,
+                        c
+                    )
+                ) {}
+            },
+            viewModel = viewModel
+        )
 
         val tryAgainAction: TryAgainAction = { adapter.retry() }
         val footerAdapter = DefaultLoadStateAdapter(tryAgainAction)
@@ -141,7 +168,6 @@ class MainFragment : Fragment() {
         val layoutManager = LinearLayoutManager(this.context)
         binding.apply {
             rvUsers.layoutManager = layoutManager
-            //rvUsers.adapter = adapter
             rvUsers.adapter = adapterWithLoadState
             (rvUsers.itemAnimator as? DefaultItemAnimator)?.supportsChangeAnimations = false
         }
@@ -163,6 +189,7 @@ class MainFragment : Fragment() {
         lifecycleScope.launch {
             viewModel.usersFlow.collectLatest { pagingData ->
                 if (!viewModel.searchBy.value.isNullOrBlank()) adapter.submitData(pagingData)
+                else adapter.submitData(PagingData.empty())
             }
         }
     }
@@ -175,15 +202,16 @@ class MainFragment : Fragment() {
         }
     }
 
-    private fun handleScrollingToTopWhenSearching(adapter: SearchUsersAdapter) = lifecycleScope.launch {
-        getRefreshLoadStateFlow(adapter)
-            .simpleScan(count = 2)
-            .collectLatest { (previousState, currentState) ->
-                if (previousState is LoadState.Loading && currentState is LoadState.NotLoading) {
-                    binding.rvUsers.scrollToPosition(0)
+    private fun handleScrollingToTopWhenSearching(adapter: SearchUsersAdapter) =
+        lifecycleScope.launch {
+            getRefreshLoadStateFlow(adapter)
+                .simpleScan(count = 2)
+                .collectLatest { (previousState, currentState) ->
+                    if (previousState is LoadState.Loading && currentState is LoadState.NotLoading) {
+                        binding.rvUsers.scrollToPosition(0)
+                    }
                 }
-            }
-    }
+        }
 
     private fun handleListVisibility(adapter: SearchUsersAdapter) = lifecycleScope.launch {
         getRefreshLoadStateFlow(adapter)

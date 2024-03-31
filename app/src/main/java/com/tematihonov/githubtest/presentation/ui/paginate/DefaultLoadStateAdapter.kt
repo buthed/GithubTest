@@ -12,7 +12,7 @@ import com.tematihonov.githubtest.databinding.PartDefaultLoadStateBinding
 typealias TryAgainAction = () -> Unit
 
 class DefaultLoadStateAdapter(
-    private val tryAgainAction: TryAgainAction
+    private val tryAgainAction: TryAgainAction,
 ) : LoadStateAdapter<DefaultLoadStateAdapter.Holder>() {
 
     override fun onBindViewHolder(holder: Holder, loadState: LoadState) {
@@ -21,14 +21,14 @@ class DefaultLoadStateAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, loadState: LoadState): Holder {
         val inflater = LayoutInflater.from(parent.context)
-         val binding = PartDefaultLoadStateBinding.inflate(inflater, parent, false)
+        val binding = PartDefaultLoadStateBinding.inflate(inflater, parent, false)
         return Holder(binding, null, tryAgainAction)
     }
 
     class Holder(
         private val binding: PartDefaultLoadStateBinding,
         private val swipeRefreshLayout: SwipeRefreshLayout?,
-        private val tryAgainAction: TryAgainAction
+        private val tryAgainAction: TryAgainAction,
     ) : RecyclerView.ViewHolder(binding.root) {
 
         init {

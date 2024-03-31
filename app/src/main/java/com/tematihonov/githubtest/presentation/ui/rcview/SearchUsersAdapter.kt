@@ -6,12 +6,16 @@ import android.view.ViewGroup
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.tematihonov.githubtest.R
 import com.tematihonov.githubtest.databinding.ItemUserBinding
 import com.tematihonov.githubtest.domain.models.responseSearch.Item
 import com.tematihonov.githubtest.presentation.ui.utils.loadImageWithCoil
+import com.tematihonov.githubtest.presentation.viewmodel.MainViewModel
 
 class SearchUsersAdapter(
     val onClickListener: (String) -> Unit,
+    val addUserToFavorite: (String, Int, String) -> Unit,
+    private val viewModel: MainViewModel,
 ) : PagingDataAdapter<Item, SearchUsersAdapter.SearchUsersViewHolder>(UsersDiffCallback()) {
 
     inner class SearchUsersViewHolder(val binding: ItemUserBinding) :
@@ -35,7 +39,22 @@ class SearchUsersAdapter(
             itemLogin.text = user.login
             itemSubtitle.text = user.id.toString()
             itemAvatar.loadImageWithCoil(user.avatar_url)
-            itemFavorite.visibility = View.GONE
+            itemFavorite.visibility = View.VISIBLE
+            itemFavorite.setOnClickListener {
+                addUserToFavorite(user.avatar_url, user.id, user.login)
+                viewModel.testDbFavorites(user.login) { result ->
+                    when (result) {
+                        true -> itemFavorite.setBackgroundResource(R.drawable.icon_favorite_border)
+                        false -> itemFavorite.setBackgroundResource(R.drawable.icon_favorite_filled)
+                    }
+                }
+            }
+            viewModel.testDbFavorites(user.login) { result ->
+                when (result) {
+                    true -> itemFavorite.setBackgroundResource(R.drawable.icon_favorite_filled)
+                    false -> itemFavorite.setBackgroundResource(R.drawable.icon_favorite_border)
+                }
+            }
         }
         holder.itemView.setOnClickListener { onClickListener(user.login) }
     }

@@ -6,10 +6,9 @@ import com.tematihonov.githubtest.domain.models.responseSearch.Item
 
 typealias UsersPageLoader = suspend (pageIndex: Int, pageSize: Int) -> List<Item>
 
-@Suppress("UnnecessaryVariable")
 class UsersPagingSource(
     private val loader: UsersPageLoader,
-    private val pageSize: Int
+    private val pageSize: Int,
 ) : PagingSource<Int, Item>() {
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Item> {
@@ -17,6 +16,7 @@ class UsersPagingSource(
 
         return try {
             val users = loader.invoke(pageIndex, params.loadSize)
+
             return LoadResult.Page(
                 data = users,
                 prevKey = if (pageIndex == 0) null else pageIndex - 1,

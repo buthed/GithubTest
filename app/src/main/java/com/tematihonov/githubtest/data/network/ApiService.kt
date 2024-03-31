@@ -19,6 +19,6 @@ interface ApiService {
 
     @GET("${USERS}{userLogin}")
     suspend fun getUser(
-        @Path("userLogin") userLogin: String
+        @Path("userLogin") userLogin: String,
     ): ResponseUser
 }

@@ -23,7 +23,8 @@
             android:hint="@string/enter_username"
             android:maxLength="12"
             android:maxLines="1"
-            android:layout_margin="10dp"
+            android:inputType="text"
+            android:imeOptions="actionDone"
             android:textColorHint="@color/black" />
 
     </com.google.android.material.textfield.TextInputLayout>

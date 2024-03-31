@@ -1,9 +1,11 @@
 package com.tematihonov.githubtest.presentation.ui.activity
 
+import android.os.Build
 import android.os.Bundle
+import android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
-import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupWithNavController
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.tematihonov.githubtest.R
@@ -13,6 +15,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
 
+    @RequiresApi(Build.VERSION_CODES.R)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -22,12 +25,9 @@ class MainActivity : AppCompatActivity() {
         val navView: BottomNavigationView = binding.navView
 
         val navController = findNavController(R.id.nav_host_fragment_activity_main)
-
-        val appBarConfiguration = AppBarConfiguration(
-            setOf(
-                R.id.navigation_main, R.id.navigation_favorite
-            )
-        )
         navView.setupWithNavController(navController)
+
+        this.window.decorView.windowInsetsController
+            ?.setSystemBarsAppearance(APPEARANCE_LIGHT_STATUS_BARS, APPEARANCE_LIGHT_STATUS_BARS);
     }
 }

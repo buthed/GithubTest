@@ -18,7 +18,6 @@ class DataBaseModule(private val context: Context) {
         return context
     }
 
-
     @Singleton
     @Provides
     fun provideGithubTestDB(): GitHubTestDataBase {
@@ -29,11 +28,9 @@ class DataBaseModule(private val context: Context) {
         ).build()
     }
 
-
     @Singleton
     @Provides
     fun provideGithubTestDao(gitHubTestDataBase: GitHubTestDataBase): GitHubTestDao {
         return gitHubTestDataBase.gitHubTestDao()
     }
-
 }

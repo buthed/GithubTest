@@ -2,22 +2,13 @@ package com.tematihonov.githubtest.data.repositoryImpl
 
 import com.tematihonov.githubtest.data.local.FavoritesUserEntity
 import com.tematihonov.githubtest.data.local.GitHubTestDao
-import com.tematihonov.githubtest.data.local.SearchUserEntity
 import com.tematihonov.githubtest.domain.repository.RoomRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class RoomRepositoryImpl @Inject constructor(
-    private val gitHubTestDao: GitHubTestDao
-): RoomRepository {
-
-//    override fun getAllSearchUsers(limit: Int, offset: Int): Flow<List<SearchUserEntity>> {
-//        return gitHubTestDao.getAllSearchUsers(limit, offset)
-//    }
-
-    override suspend fun addUserToSearh(searchUser: SearchUserEntity) {
-        gitHubTestDao.addUserToSearh(searchUser)
-    }
+    private val gitHubTestDao: GitHubTestDao,
+) : RoomRepository {
 
     override fun getAllFavoritesUsers(): Flow<List<FavoritesUserEntity>> {
         return gitHubTestDao.getAllFavoritesUsers()
@@ -33,6 +24,6 @@ class RoomRepositoryImpl @Inject constructor(
 
 
     override suspend fun checkUsersOnContainsInTable(userLogin: String): List<FavoritesUserEntity> {
-        return  gitHubTestDao.checkUsersOnContainsInTable(userLogin)
+        return gitHubTestDao.checkUsersOnContainsInTable(userLogin)
     }
 }
